@@ -1,16 +1,33 @@
-const express = require('express');
-const app = express ();
-const server = require('http').Server(app);
+// document.onkeydown = e => {
+//     if (e.keyCode === 68){//d
+//     player.rt = true;
+//     }
+//     else if (e.keyCode === 83){//s
+//       player.dn = true;
+//     }
+//     else if (e.keyCode === 65){//a
+//       player.lf = true;
+//     }
+//     else if (e.keyCode === 87){//w
+//       player.up = true;
+//     }
+//   };
+//
+// document.onkeyup = e => {
+//     if (e.keyCode === 68){//d
+//       player.rt = false;
+//     }
+//     else if (e.keyCode === 83){//s
+//       player.dn = false;
+//     }
+//     else if (e.keyCode === 65){//a
+//       player.lf = false;
+//     }
+//     else if (e.keyCode === 87){//w
+//       player.up = false;
+//     }
+//   };
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/client/index.html');
-});
-app.use('/client', express.static(__dirname + '/client'));
-server.listen(3000);
-console.log('server running...');
-
-const SOCKET_LIST = {};
-const PLAYER_LIST = {};
 
 class Player {
   constructor(id) {
@@ -25,97 +42,92 @@ class Player {
     this.accel = 0.5;
     this.vx = 0;
     this.vy = 0;
+    this.theta = 0;
   }
 
   updatePostition() {
-    if (this.rt) {
-      this.vx += this.accel;
+    let newVX = stage.mouseX - this.x;
+    let newVY = stage.mouseY - this.y;
+    let newV = Math.sqrt(Math.pow(newVX, 2) + Math.pow(newVY, 2))
+    this.vx += newVX / newV;
+    this.vy += newVY / newV;
+    if (newV < 0.2 || !stage.mouseInBounds) {
+      this.vx = 0;
+      this.vy = 0;
     }
-    if (this.lf) {
-      this.vx -= this.accel;
-    }
-    if (this.up) {
-      this.vy -= this.accel;
-    }
-    if (this.dn) {
-      this.vy += this.accel;
-    }
+
+  //   if (this.rt) {
+  //     this.vx += this.accel;
+  //   }
+  //   if (this.lf) {
+  //     this.vx -= this.accel;
+  //   }
+  //   if (this.up) {
+  //     this.vy -= this.accel;
+  //   }
+  //   if (this.dn) {
+  //     this.vy += this.accel;
+  //   }
     this.x += this.vx;
     this.y += this.vy;
-    this.vx = this.vx * 0.98;
-    this.vy = this.vy * 0.98;
+    this.vx = this.vx * 0.8;
+    this.vy = this.vy * 0.8;
 
-    if (this.x > 970) {
-      this.x = 970;
-      this.vx = -this.vx * 0.25;
+    if (this.x > 975) {
+      this.x = 975;
+      this.vx = -this.vx * 0.5;
       this.icon++;
     }
-    if (this.y > 600) {
-      this.y = 600;
-      this.vy = -this.vy * 0.25;
-      this.icon++;
-
-    }
-    if (this.x < 0) {
-      this.x = 0;
-      this.vx = -this.vx * 0.25;
+    if (this.y > 575) {
+      this.y = 575;
+      this.vy = -this.vy * 0.5;
       this.icon++;
 
     }
-    if (this.y < 30) {
-      this.y = 30;
-      this.vy = -this.vy * 0.25;
+    if (this.x < 25) {
+      this.x = 25;
+      this.vx = -this.vx * 0.5;
+      this.icon++;
+
+    }
+    if (this.y < 25) {
+      this.y = 25;
+      this.vy = -this.vy * 0.5;
       this.icon++;
 
     }
   }
 }
+const init = () => {
+  const ctx = document.getElementById('ctx');
+  window.stage = new createjs.Stage(ctx);
+  stage.mouseEventsEnabled = true;
+  stage.keyboardEventsEnabled = true;
+  createjs.Ticker.framerate = 60;
+  createjs.Ticker.addEventListener(stage);
 
-const io = require('socket.io')(server, {});
-io.sockets.on('connection', (socket) => {
-  socket.id = Math.random();
-  SOCKET_LIST[socket.id] = socket;
+  addGame();
+};
 
-  const player = new Player(socket.id);
-  PLAYER_LIST[socket.id] = player;
+const addGame = () => {
+  window.player = new Player(1);
+  window.circle = new createjs.Shape();
+  circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 25);
+  circle.x = player.x;
+  circle.y = player.y;
+  stage.addChild(circle);
+  stage.update();
+  startGame();
+};
 
-  socket.on('disconnect', () => {
-    delete SOCKET_LIST[socket.id];
-    delete PLAYER_LIST[socket.id];
+const startGame = () => {
 
-  });
+  createjs.Ticker.addEventListener('tick', update);
+};
 
-  socket.on('keyPress', data => {
-    if (data.inputId === 'rt') {
-      player.rt = data.state;
-    }
-    if (data.inputId === 'lf') {
-      player.lf = data.state;
-    }
-    if (data.inputId === 'up') {
-      player.up = data.state;
-    }
-    if (data.inputId === 'dn') {
-      player.dn = data.state;
-    }
-  });
-
-  console.log('socket connected');
-});
-
-setInterval(() => {
-  const pack = [];
-  for(var i in PLAYER_LIST) {
-  const player = PLAYER_LIST[i];
-    player.updatePostition();
-    pack.push({
-      icon: player.icon,
-      x: player.x,
-      y: player.y
-    });
-  }
-  for(var j in SOCKET_LIST) {
-    const socket = SOCKET_LIST[j];
-    socket.emit('newPos', pack);
-  }
-} ,1000/60);
+const update = () => {
+  player.updatePostition();
+  circle.x = player.x;
+  circle.y = player.y;
+  stage.update();
+};
