@@ -1,12 +1,29 @@
 {
   "name": "js_gaem",
   "version": "1.0.0",
-  "description": "",
+  "description": "NB: I know this is a little out there, I have backup plans",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "createjs-easeljs": "^0.8.2",
+    "express": "^4.14.1",
+    "socket.io": "^1.7.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JimGreenberg/js-gaem.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JimGreenberg/js-gaem/issues"
+  },
+  "homepage": "https://github.com/JimGreenberg/js-gaem#readme"
 }
