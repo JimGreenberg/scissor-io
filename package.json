@@ -19,6 +19,7 @@
     "createjs": "0.0.1",
     "createjs-easeljs": "^0.8.2",
     "express": "^4.14.1",
+    "konva": "^1.4.0",
     "lodash": "^4.17.4",
     "socket.io": "^1.7.3",
     "yuki-createjs": "0.0.3"
