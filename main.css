@@ -1,0 +1,47 @@
+* {
+  outline: none;
+}
+div {
+  font-family: sans-serif;
+  border: 3px outset #999;
+  width: 80%;
+  margin: 50px auto;
+  padding: 10px;
+  border-radius: 15px;
+  color: rgb(198, 140, 235);
+  background-image: url('./img/background.jpg');
+  box-shadow: 0 0 50px rgb(198, 140, 235);
+}
+button {
+  padding: 10px 20px;
+  color: black;
+  font-size: 20px;
+  background: rgba(255, 255, 255,0.5);
+  box-shadow: 0 0 10px white;
+  transition: box-shadow 500ms;
+  border-radius: 25%;
+  border: none;
+}
+button:hover {
+  cursor: pointer;
+  transition: box-shadow 500ms;
+  box-shadow: 0 0 30px white;
+}
+
+@keyframes warning {
+  50% {color: red;}
+}
+h2 {
+  color: white;
+  animation: warning 2s infinite;
+}
+.label {
+  font-family:sans-serif;
+}
+a {
+  margin-top: 30px;
+  padding: 0 20px;
+  color: rgba(255,255,255,0.3);
+  text-decoration: none;
+  cursor: pointer;
+}
