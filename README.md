@@ -5,7 +5,7 @@ Scissor.io is a spoof of the "popular" online multiplayer game [slither.io](slit
 
 ![sample]('./img/sample1.gif')
 
-###Technology and Architecture
+### Technology and Architecture
   - Vanilla JS for overall logic
   - Create.js
     + Easel.js
